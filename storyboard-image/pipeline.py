@@ -35,16 +35,18 @@ class ImagePipelineProcessor:
     background[depth_array == 0] = 0
     return foreground, background
 
-  def save_foreground(self, foreground):
+  def save_foreground(self, foreground, filename="foreground.png"):
     foreground_image = Image.fromarray(foreground).convert("RGBA")
     data = foreground_image.getdata()
     new_data = [(0, 0, 0, 0) if item[0] == 0 and item[1] == 0 and item[2] == 0 else item for item in data]
     foreground_image.putdata(new_data)
-    foreground_image.save("foreground.png", format="PNG")
+    foreground_image.save(filename, format="PNG")
+    return foreground_image
 
-  def save_background(self, image):
+  def save_background(self, image, filename="background.png"):
     blurred_image = image.filter(ImageFilter.GaussianBlur(10))
-    blurred_image.save("background.png", format="PNG")
+    blurred_image.save(filename, format="PNG")
+    return blurred_image
 
   def run(self):
     image, depth = self.generate_images()
